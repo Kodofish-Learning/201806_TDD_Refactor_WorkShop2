@@ -18,17 +18,16 @@ namespace BadgetQuery
         {
             if (endDate < startDate) throw new ArgumentException();
             var totalBudget = 0m;
-            _monthList = Enumerable.Range(startDate.Month, endDate.Month - startDate.Month + 1).ToList();
-
+            _monthList = GetMonthRange(startDate, endDate);
 
             foreach (var month in _monthList)
             {
                 var monthStartDate = IsFirstMonth(month)
                     ? startDate
-                    : new DateTime(startDate.Year, month, 1);
+                    : GetMonthFirstDate(startDate, month);
                 var monthEndDate = IsLastMonth(month)
                     ? endDate
-                    : new DateTime(startDate.Year, month, DateTime.DaysInMonth(startDate.Year, month));
+                    : GetMonthLastDate(startDate, month);
 
 
                 totalBudget += QueryInMonthBudgetAmount(monthStartDate, monthEndDate);
@@ -36,6 +35,21 @@ namespace BadgetQuery
 
 
             return totalBudget;
+        }
+
+        private static DateTime GetMonthLastDate(DateTime startDate, int month)
+        {
+            return new DateTime(startDate.Year, month, DateTime.DaysInMonth(startDate.Year, month));
+        }
+
+        private static DateTime GetMonthFirstDate(DateTime startDate, int month)
+        {
+            return new DateTime(startDate.Year, month, 1);
+        }
+
+        private static List<int> GetMonthRange(DateTime startDate, DateTime endDate)
+        {
+            return Enumerable.Range(startDate.Month, endDate.Month - startDate.Month + 1).ToList();
         }
 
         private bool IsLastMonth(int month)
