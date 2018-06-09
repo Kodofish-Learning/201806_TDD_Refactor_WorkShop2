@@ -78,6 +78,13 @@ namespace BadgetQuery
             AssertBudgetShouldBe(110m);
         }
 
+        [Test]
+        public void Query_from_20180701_to_20180601__should_throw_Exception()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                WhenQueryBudget(new DateTime(2018, 7, 01), new DateTime(2018, 6, 01)));
+        }
+
 
         [Test]
         public void Query_from_20180722_to_201808015_cross_2month_should_1500()
