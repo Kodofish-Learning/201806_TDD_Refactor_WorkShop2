@@ -45,7 +45,7 @@ namespace BadgetQuery
 
 
         [Test]
-        public void Query_Query_from_20180601_to_20180601_One_day_in_june_Should_10()
+        public void Query_from_20180601_to_20180601_One_day_in_june_Should_10()
         {
             WhenQueryBudget(new DateTime(2018, 6, 1), new DateTime(2018, 6, 1));
             AssertBudgetShouldBe(10m);
@@ -53,7 +53,7 @@ namespace BadgetQuery
 
 
         [Test]
-        public void Query_Query_from_20180601_to_20180630_full_month_should_300()
+        public void Query_from_20180601_to_20180630_full_month_should_300()
         {
             WhenQueryBudget(new DateTime(2018, 6, 1), new DateTime(2018, 6, 30));
 
@@ -62,11 +62,20 @@ namespace BadgetQuery
 
 
         [Test]
-        public void Query_Query_from_20180620_to_20180705_cross_2month_should_110()
+        public void Query_from_20180620_to_20180705_cross_2month_should_110()
         {
             WhenQueryBudget(new DateTime(2018, 6, 20), new DateTime(2018, 7, 5));
 
             AssertBudgetShouldBe(110m);
+        }
+
+
+        [Test]
+        public void Query_from_20180722_to_201808015_cross_2month_should_1500()
+        {
+            WhenQueryBudget(new DateTime(2018, 7, 22), new DateTime(2018, 8, 15));
+
+            AssertBudgetShouldBe(1500m);
         }
     }
 }
