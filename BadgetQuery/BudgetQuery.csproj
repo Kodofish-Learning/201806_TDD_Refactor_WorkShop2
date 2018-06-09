@@ -53,7 +53,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestClass.cs" />
+    <Compile Include="Budget.cs" />
+    <Compile Include="BudgetQuery.cs" />
+    <Compile Include="BudgetQueryTests.cs" />
+    <Compile Include="IBudgetRepostory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
