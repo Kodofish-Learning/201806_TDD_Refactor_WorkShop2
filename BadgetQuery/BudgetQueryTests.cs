@@ -44,5 +44,14 @@ namespace BadgetQuery
             decimal actual = _target.Query(new DateTime(2018, 6, 1), new DateTime(2018, 6, 1));
             actual.ShouldBe(10m);
         }
+
+
+        [Test]
+        public void Query_Query_from_20180601_to_20180630_full_month_should_300()
+        {
+            decimal actual = _target.Query(new DateTime(2018, 6, 1), new DateTime(2018, 6, 30));
+            actual.ShouldBe(300m);
+        }
+
     }
 }
