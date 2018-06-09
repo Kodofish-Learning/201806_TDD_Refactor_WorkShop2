@@ -1,10 +1,7 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NSubstitute;
+using NUnit.Framework;
 using Shouldly;
 
 namespace BadgetQuery
@@ -12,46 +9,55 @@ namespace BadgetQuery
     [TestFixture]
     public class BugetQueryTests
     {
-        private BudgetQuery _target;
-
         [SetUp]
         public void Setup()
         {
-            IBudgetRepostory _budgetRepostory = NSubstitute.Substitute.For<IBudgetRepostory>();
-            _budgetRepostory.GetBudgets().Returns(new List<Budget>()
+            var _budgetRepostory = Substitute.For<IBudgetRepostory>();
+            _budgetRepostory.GetBudgets().Returns(new List<Budget>
             {
-                new Budget()
+                new Budget
                 {
-                    YearMonth = new DateTime(2018,6, 1),
+                    YearMonth = new DateTime(2018, 6, 1),
                     Amount = 300m
                 },
-                new Budget()
+                new Budget
                 {
-                    YearMonth = new DateTime(2018, 8, 1)
-                    , Amount = 3100m
+                    YearMonth = new DateTime(2018, 8, 1),
+                    Amount = 3100m
                 }
-
             });
 
             _target = new BudgetQuery(_budgetRepostory);
+        }
 
+        private BudgetQuery _target;
+        private decimal actual;
+
+        private void AssertBudgetShouldBe(decimal expected)
+        {
+            actual.ShouldBe(expected);
+        }
+
+        private void WhenQueryBudget(DateTime startDate, DateTime endDate)
+        {
+            actual = _target.Query(startDate, endDate);
         }
 
 
         [Test]
         public void Query_Query_from_20180601_to_20180601_One_day_in_june_Should_10()
         {
-            decimal actual = _target.Query(new DateTime(2018, 6, 1), new DateTime(2018, 6, 1));
-            actual.ShouldBe(10m);
+            WhenQueryBudget(new DateTime(2018, 6, 1), new DateTime(2018, 6, 1));
+            AssertBudgetShouldBe(10m);
         }
 
 
         [Test]
         public void Query_Query_from_20180601_to_20180630_full_month_should_300()
         {
-            decimal actual = _target.Query(new DateTime(2018, 6, 1), new DateTime(2018, 6, 30));
-            actual.ShouldBe(300m);
-        }
+            WhenQueryBudget(new DateTime(2018, 6, 1), new DateTime(2018, 6, 30));
 
+            AssertBudgetShouldBe(300m);
+        }
     }
 }
