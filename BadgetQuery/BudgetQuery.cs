@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BadgetQuery
@@ -23,35 +24,29 @@ namespace BadgetQuery
                 var firstMonthStartDate = startDate;
                 var firstMonthEndDate = new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month));
 
-                var dayDiff = new TimeSpan(firstMonthEndDate.Ticks - firstMonthStartDate.Ticks).Days + 1;
-                var currentMonthBudget = budgets.FirstOrDefault(it => it.YearMonth == new DateTime(firstMonthStartDate.Year, firstMonthStartDate.Month, 1))?.Amount ?? 0m;
-                var currentMonthDays = DateTime.DaysInMonth(firstMonthStartDate.Year, firstMonthStartDate.Month);
-                var oneDayBudgetAmount = currentMonthBudget / currentMonthDays;
-                totalBudget += dayDiff * oneDayBudgetAmount;
+                totalBudget += QueryInMonthBudgetAmount(firstMonthStartDate, firstMonthEndDate, budgets);
 
                 var secondMonthStartDate = new DateTime(endDate.Year, endDate.Month, 1);
                 var secondMonthEndDate = endDate;
 
-                dayDiff = new TimeSpan(secondMonthEndDate.Ticks - secondMonthStartDate.Ticks).Days + 1;
-                currentMonthBudget = budgets.FirstOrDefault(it => it.YearMonth == new DateTime(secondMonthStartDate.Year, secondMonthStartDate.Month, 1))?.Amount ?? 0m;
-                currentMonthDays = DateTime.DaysInMonth(secondMonthStartDate.Year, secondMonthStartDate.Month);
-                oneDayBudgetAmount = currentMonthBudget / currentMonthDays;
-                totalBudget += dayDiff * oneDayBudgetAmount;
+                totalBudget += QueryInMonthBudgetAmount(secondMonthStartDate, secondMonthEndDate, budgets);
 
                 return totalBudget;
             }
 
-            if (startDate.Month == endDate.Month && startDate.Year == endDate.Year)
-            {
-                var dayDiff = new TimeSpan(endDate.Ticks - startDate.Ticks).Days + 1;
-                var currentMonthBudget = budgets.First(it => it.YearMonth == new DateTime(startDate.Year, startDate.Month, 1));
-                var currentMonthDays = DateTime.DaysInMonth(startDate.Year, startDate.Month);
-                var oneDayBudgetAmount = currentMonthBudget.Amount / currentMonthDays;
-                return dayDiff * oneDayBudgetAmount;
-            }
+            if (startDate.Month == endDate.Month && startDate.Year == endDate.Year) return QueryInMonthBudgetAmount(startDate, endDate, budgets);
 
 
             return 10m;
+        }
+
+        private static decimal QueryInMonthBudgetAmount(DateTime startDate, DateTime endDate, List<Budget> budgets)
+        {
+            var dayDiff = new TimeSpan(endDate.Ticks - startDate.Ticks).Days + 1;
+            var currentMonthBudget = budgets.FirstOrDefault(it => it.YearMonth == new DateTime(startDate.Year, startDate.Month, 1))?.Amount ?? 0;
+            var currentMonthDays = DateTime.DaysInMonth(startDate.Year, startDate.Month);
+            var oneDayBudgetAmount = currentMonthBudget / currentMonthDays;
+            return dayDiff * oneDayBudgetAmount;
         }
     }
 }
