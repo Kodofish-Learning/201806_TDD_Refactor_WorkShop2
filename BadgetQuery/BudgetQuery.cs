@@ -19,17 +19,27 @@ namespace BadgetQuery
             if (startDate.Year == endDate.Year && startDate.Month != endDate.Month)
             {
                 var totalBudget = 0m;
-
+                var monthList = Enumerable.Range(startDate.Month, endDate.Month - startDate.Month).ToList();
 
                 var firstMonthStartDate = startDate;
                 var firstMonthEndDate = new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month));
+                monthList.Remove(startDate.Month);
 
                 totalBudget += QueryInMonthBudgetAmount(firstMonthStartDate, firstMonthEndDate, budgets);
 
                 var secondMonthStartDate = new DateTime(endDate.Year, endDate.Month, 1);
                 var secondMonthEndDate = endDate;
+                monthList.Remove(endDate.Month);
 
                 totalBudget += QueryInMonthBudgetAmount(secondMonthStartDate, secondMonthEndDate, budgets);
+
+                foreach (var month in monthList)
+                {
+                    var monthStartDate = new DateTime(startDate.Year, month, 1);
+                    var monthEndDate = new DateTime(startDate.Year, month, DateTime.DaysInMonth(startDate.Year, month));
+                    totalBudget += QueryInMonthBudgetAmount(monthStartDate, monthEndDate, budgets);
+                }
+
 
                 return totalBudget;
             }
