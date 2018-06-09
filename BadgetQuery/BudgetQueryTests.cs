@@ -45,6 +45,15 @@ namespace BadgetQuery
 
 
         [Test]
+        public void Query_from_20180518_to_20180711_cross_3month_should_300()
+        {
+            WhenQueryBudget(new DateTime(2018, 5, 18), new DateTime(2018, 7, 11));
+
+            AssertBudgetShouldBe(300m);
+        }
+
+
+        [Test]
         public void Query_from_20180601_to_20180601_One_day_in_june_Should_10()
         {
             WhenQueryBudget(new DateTime(2018, 6, 1), new DateTime(2018, 6, 1));
