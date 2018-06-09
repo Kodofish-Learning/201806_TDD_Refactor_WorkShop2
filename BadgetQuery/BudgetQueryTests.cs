@@ -59,5 +59,14 @@ namespace BadgetQuery
 
             AssertBudgetShouldBe(300m);
         }
+
+
+        [Test]
+        public void Query_Query_from_20180620_to_20180705_cross_2month_should_110()
+        {
+            WhenQueryBudget(new DateTime(2018, 6, 20), new DateTime(2018, 7, 5));
+
+            AssertBudgetShouldBe(110m);
+        }
     }
 }
