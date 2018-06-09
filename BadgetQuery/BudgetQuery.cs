@@ -7,7 +7,7 @@ namespace BadgetQuery
     public class BudgetQuery
     {
         private readonly IBudgetRepostory _budgetRepostory;
-        private List<int> monthList;
+        private List<int> _monthList;
 
         public BudgetQuery(IBudgetRepostory budgetRepostory)
         {
@@ -16,12 +16,13 @@ namespace BadgetQuery
 
         public decimal Query(DateTime startDate, DateTime endDate)
         {
+            if (endDate < startDate) throw new ArgumentException();
             var budgets = _budgetRepostory.GetBudgets();
             var totalBudget = 0m;
-            monthList = Enumerable.Range(startDate.Month, endDate.Month - startDate.Month + 1).ToList();
+            _monthList = Enumerable.Range(startDate.Month, endDate.Month - startDate.Month + 1).ToList();
 
 
-            foreach (var month in monthList)
+            foreach (var month in _monthList)
             {
                 var monthStartDate = IsFirstMonth(month)
                     ? startDate
@@ -40,12 +41,12 @@ namespace BadgetQuery
 
         private bool IsLastMonth(int month)
         {
-            return month == monthList.Last();
+            return month == _monthList.Last();
         }
 
         private bool IsFirstMonth(int month)
         {
-            return month == monthList.First();
+            return month == _monthList.First();
         }
 
         private static decimal QueryInMonthBudgetAmount(DateTime startDate, DateTime endDate, List<Budget> budgets)
