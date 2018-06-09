@@ -7,6 +7,7 @@ namespace BadgetQuery
     public class BudgetQuery
     {
         private readonly IBudgetRepostory _budgetRepostory;
+        private List<int> monthList;
 
         public BudgetQuery(IBudgetRepostory budgetRepostory)
         {
@@ -19,25 +20,18 @@ namespace BadgetQuery
             if (startDate.Year == endDate.Year && startDate.Month != endDate.Month)
             {
                 var totalBudget = 0m;
-                var monthList = Enumerable.Range(startDate.Month, endDate.Month - startDate.Month + 1).ToList();
+                monthList = Enumerable.Range(startDate.Month, endDate.Month - startDate.Month + 1).ToList();
 
 
                 foreach (var month in monthList)
                 {
-                    var monthStartDate = new DateTime(startDate.Year, month, 1);
-                    var monthEndDate = new DateTime(startDate.Year, month, DateTime.DaysInMonth(startDate.Year, month));
+                    var monthStartDate = IsFirstMonth(month)
+                        ? startDate
+                        : new DateTime(startDate.Year, month, 1);
+                    var monthEndDate = IsLastMonth(month)
+                        ? endDate
+                        : new DateTime(startDate.Year, month, DateTime.DaysInMonth(startDate.Year, month));
 
-                    if (month == monthList.First())
-                    {
-                        monthStartDate = startDate;
-                        monthEndDate = new DateTime(startDate.Year, month, DateTime.DaysInMonth(startDate.Year, month));
-                    }
-
-                    if (month == monthList.Last())
-                    {
-                        monthStartDate = new DateTime(startDate.Year, month, 1);
-                        monthEndDate = endDate;
-                    }
 
                     totalBudget += QueryInMonthBudgetAmount(monthStartDate, monthEndDate, budgets);
                 }
@@ -50,6 +44,16 @@ namespace BadgetQuery
 
 
             return 10m;
+        }
+
+        private bool IsLastMonth(int month)
+        {
+            return month == monthList.Last();
+        }
+
+        private bool IsFirstMonth(int month)
+        {
+            return month == monthList.First();
         }
 
         private static decimal QueryInMonthBudgetAmount(DateTime startDate, DateTime endDate, List<Budget> budgets)
