@@ -17,33 +17,25 @@ namespace BadgetQuery
         public decimal Query(DateTime startDate, DateTime endDate)
         {
             var budgets = _budgetRepostory.GetBudgets();
-            if (startDate.Year == endDate.Year && startDate.Month != endDate.Month)
+            var totalBudget = 0m;
+            monthList = Enumerable.Range(startDate.Month, endDate.Month - startDate.Month + 1).ToList();
+
+
+            foreach (var month in monthList)
             {
-                var totalBudget = 0m;
-                monthList = Enumerable.Range(startDate.Month, endDate.Month - startDate.Month + 1).ToList();
+                var monthStartDate = IsFirstMonth(month)
+                    ? startDate
+                    : new DateTime(startDate.Year, month, 1);
+                var monthEndDate = IsLastMonth(month)
+                    ? endDate
+                    : new DateTime(startDate.Year, month, DateTime.DaysInMonth(startDate.Year, month));
 
 
-                foreach (var month in monthList)
-                {
-                    var monthStartDate = IsFirstMonth(month)
-                        ? startDate
-                        : new DateTime(startDate.Year, month, 1);
-                    var monthEndDate = IsLastMonth(month)
-                        ? endDate
-                        : new DateTime(startDate.Year, month, DateTime.DaysInMonth(startDate.Year, month));
-
-
-                    totalBudget += QueryInMonthBudgetAmount(monthStartDate, monthEndDate, budgets);
-                }
-
-
-                return totalBudget;
+                totalBudget += QueryInMonthBudgetAmount(monthStartDate, monthEndDate, budgets);
             }
 
-            if (startDate.Month == endDate.Month && startDate.Year == endDate.Year) return QueryInMonthBudgetAmount(startDate, endDate, budgets);
 
-
-            return 10m;
+            return totalBudget;
         }
 
         private bool IsLastMonth(int month)
