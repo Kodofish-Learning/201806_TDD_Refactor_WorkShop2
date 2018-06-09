@@ -11,9 +11,9 @@ namespace BadgetQuery
             _budgetRepostory = budgetRepostory;
         }
 
-        public decimal Query(DateTime dateTime, DateTime dateTime1)
+        public decimal Query(DateTime startDate, DateTime endDate)
         {
-            throw new NotImplementedException();
+            return 10m;
         }
     }
 }
