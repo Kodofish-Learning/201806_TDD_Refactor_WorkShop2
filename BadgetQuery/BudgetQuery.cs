@@ -17,7 +17,6 @@ namespace BadgetQuery
         public decimal Query(DateTime startDate, DateTime endDate)
         {
             if (endDate < startDate) throw new ArgumentException();
-            var budgets = _budgetRepostory.GetBudgets();
             var totalBudget = 0m;
             _monthList = Enumerable.Range(startDate.Month, endDate.Month - startDate.Month + 1).ToList();
 
@@ -32,7 +31,7 @@ namespace BadgetQuery
                     : new DateTime(startDate.Year, month, DateTime.DaysInMonth(startDate.Year, month));
 
 
-                totalBudget += QueryInMonthBudgetAmount(monthStartDate, monthEndDate, budgets);
+                totalBudget += QueryInMonthBudgetAmount(monthStartDate, monthEndDate);
             }
 
 
@@ -49,8 +48,9 @@ namespace BadgetQuery
             return month == _monthList.First();
         }
 
-        private static decimal QueryInMonthBudgetAmount(DateTime startDate, DateTime endDate, List<Budget> budgets)
+        private decimal QueryInMonthBudgetAmount(DateTime startDate, DateTime endDate)
         {
+            var budgets = _budgetRepostory.GetBudgets();
             var dayDiff = new TimeSpan(endDate.Ticks - startDate.Ticks).Days + 1;
             var currentMonthBudget = budgets.FirstOrDefault(it => it.YearMonth == new DateTime(startDate.Year, startDate.Month, 1))?.Amount ?? 0;
             var currentMonthDays = DateTime.DaysInMonth(startDate.Year, startDate.Month);
